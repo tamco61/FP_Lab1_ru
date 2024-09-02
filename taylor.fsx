@@ -1,3 +1,4 @@
+//var2
 let a = 0.0
 let b = 0.5
 let n = 10.
