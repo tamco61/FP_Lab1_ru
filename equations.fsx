@@ -1,28 +1,52 @@
-// Определите функции для решение алгебраических уравнений
+let a = 0.0
+let b = 0.5
+let n = 10.
+let e = 0.001
 
-let dichotomy f a b = 0.
+let f x = log((1.0 + x) / (1.0 - x))
 
-let iterations phi x0 = 0.
+let rec loop i n func x =
+  if i <= n then
+    let x = func x
+    loop (i + 1.) n func x
+  else
+    x
 
-let newthon f f' x0 = 0.
-// используйте функцию 'iterations'
+let m a b = a * b
 
-// Решите 3 уравнения (начиная со своего номера варианта) с использованием 3-х методов
-let f1 = ...
-let f2 = ...
-let f3 = ...
+let pow x n = loop 1. n (m x) x
 
-let f1' = ...
-let f2' = ...
-let f3' = ...
+let rec taylor x i e sum = 
+  let last_y = (pow x (2. * (i) + 1.)) / (2. * (i) + 1.)
+  let new_y = (pow x (2. * (i + 1.) + 1.)) / (2. * (i + 1.) + 1.)
+  if (abs(new_y - last_y) < e) then
+    (2.*(sum + last_y), i)
+  else
+    let sum = sum + last_y
+    taylor x (i + 1.) e sum
 
-let phi1 = ...
-let phi2 = ...
-let phi3 = ...
 
-let main = 
-    printfn "%10.5f  %10.5f  %10.5f" (dichotomy f1 0. 1.) (iterations phi1 0.) (newthon f1 f1' 1.)
-    printfn "%10.5f  %10.5f  %10.5f" (dichotomy f2 0. 1.) (iterations phi2 0.) (newthon f2 f2' 1.)
-    printfn "%10.5f  %10.5f  %10.5f" (dichotomy f3 0. 1.) (iterations phi3 0.) (newthon f3 f3' 1.)
+let rec taylorSmart x last_y i e sum = 
+  let new_y = pow x 2. * last_y * (2.*(i - 1.) + 1.)  / (i * 2. + 1.)
+  if (abs(new_y - last_y) < e) then
+    (2. * sum, (i - 1.) / 2.)
+  else
+    let sum = sum + new_y
+    taylorSmart x new_y (i + 2.) e sum
 
- 
+let osnova i = 
+  let x = a+(float i)/(float n)*(b-a)
+  let t, ti = taylor x 0. e 0.
+  let tS, tSi = taylorSmart x x 1. e x  
+  printfn "|%5.2f|  %10.6f|  %10.6f|   %10.0f|  %10.6f|   %10.0f|" x (f x) t ti tS tSi
+  i + 1.
+
+
+let main =
+    printfn "--------------------------------------------------------------------------"
+    printfn "|  x  |    f(x)    |   Naive    |    Iters    |   Smart    |    Iters    |"
+    printfn "--------------------------------------------------------------------------"
+    loop 0. n osnova 0.
+    printfn "--------------------------------------------------------------------------"
+
+main
